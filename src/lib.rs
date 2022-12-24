@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use event_listener::PriorityEventListener;
-use parking_lot::{Mutex, MutexGuard};
+use simple_mutex::{Mutex, MutexGuard};
 
 mod event_listener;
 mod pv;
@@ -63,5 +63,29 @@ impl<'a, T> Deref for PriorityMutexGuard<'a, T> {
 impl<'a, T> DerefMut for PriorityMutexGuard<'a, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.inner.deref_mut()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{sync::Arc, time::Duration};
+
+    use crate::PriorityMutex;
+
+    #[test]
+    fn simple() {
+        let item = Arc::new(PriorityMutex::new(0));
+        for i in 0..1000 {
+            let priority = fastrand::u32(0..1000);
+            let item = item.clone();
+            smol::spawn(async move {
+                let mut g = item.lock(priority).await;
+                *g += 1;
+                smol::Timer::after(Duration::from_millis(1)).await;
+                eprintln!("incrementing to {} with {priority}", *g);
+            })
+            .detach();
+        }
+        std::thread::sleep(Duration::from_secs(1))
     }
 }

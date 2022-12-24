@@ -1,6 +1,6 @@
 use std::collections::BinaryHeap;
 
-use parking_lot::Mutex;
+use simple_mutex::Mutex;
 
 use crate::pv::PV;
 

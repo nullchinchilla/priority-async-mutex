@@ -10,4 +10,9 @@ description="An async mutex where the lock operation takes a priority"
 
 [dependencies]
 oneshot = "0.1.5"
-parking_lot = "0.12.1"
+simple-mutex = "1.1.5"
+# parking_lot = {version="0.12.1", features=["send_guard"]}
+
+[dev-dependencies]
+smol="1"
+fastrand="1"
