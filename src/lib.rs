@@ -6,7 +6,7 @@ use parking_lot::{Mutex, MutexGuard};
 mod event_listener;
 mod pv;
 
-/// A mutex where the lock operation takes a priority.
+/// An async mutex where the lock operation takes a priority.
 pub struct PriorityMutex<T> {
     inner: Mutex<T>,
     listen: PriorityEventListener,
